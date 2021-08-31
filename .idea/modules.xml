@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/vscodex.iml" filepath="$PROJECT_DIR$/.idea/vscodex.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/vscodexcopilot.iml" filepath="$PROJECT_DIR$/.idea/vscodexcopilot.iml" />
     </modules>
   </component>
 </project>
