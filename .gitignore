@@ -10,4 +10,4 @@ node_modules
 /vscode.d.ts
 /vscode.proposed.d.ts
 vscode.d.ts
-.idea/
+.idea
