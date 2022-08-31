@@ -63,7 +63,7 @@ export const getEditResult = (
                 temperature: config.temperature,
                 top_p: config.topP
             }), editResult = JSON.parse(createEditRequest.data.choices[0].text),
-            getEditResult.then (Error: any) => {
+            getEditResult = (Error: any) => {
                 if (Error) {
                     let message: string;
                     // If the API specified an error message, return it.
