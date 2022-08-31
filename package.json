@@ -1,122 +1,130 @@
 {
-	"name": "vscodex",
-	"displayName": "vscodex",
-	"publisher": "vhachin",
-	"icon": "assets/codex_icon.png",
-	"description": "A non-official OpenAI extension for vscode",
-	"version": "0.1.0",
-	"repository": "https://github.com/VincentHch/vscodex",
-	"engines": {
-		"vscode": "^1.56.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:vscodex.predict",
-		"onCommand:vscodex.setLevelAndPredict"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "vscodex.predict",
-				"title": "VScodex: Complete snippet",
-				"icon": "asssets/codex_icon.png"
-			},
-			{
-				"command": "vscodex.setLevelAndPredict",
-				"title": "VScodex: Set level and complete snippet",
-				"icon": "asssets/codex_icon.png"
-			}
-		],
-		"keybindings": [
-			{
-				"command": "vscodex.predict",
-				"key": "ctrl+enter"
-			},
-			{
-				"command": "vscodex.setLevelAndPredict",
-				"key": "ctrl+shift+enter"
-			}
-		],
-		"configuration": {
-			"title": "VSCodex",
-			"properties": {
-				"general.OPENAI_API_KEY": {
-					"type": "string",
-					"default": "",
-					"scope": "application",
-					"description": "Your OpenAI secret, if empty, OPENAI_API_KEY environment variable will be used instead."
-				},
-				"general.maxTokens": {
-					"type": "number",
-					"default": 250,
-					"scope": "application",
-					"description": "Maximum number of tokens predicted."
-				},
-				"general.temperature": {
-					"type": "number",
-					"default": 0.3,
-					"scope": "application",
-					"description": "0 -> deterministic model, 1 -> Random model"
-				},
-				"general.frequencyPenalty": {
-					"type": "number",
-					"default": 0,
-					"scope": "application",
-					"description": "0-1, Higher value -> Less chance of repeating same line"
-				},
-				"general.presencePenalty": {
-					"type": "number",
-					"default": 0,
-					"scope": "application",
-					"description": "0-1, Higher value -> Less chance of repeating same topic"
-				},
-				"tokens.stopFunction": {
-					"type": "string",
-					"default": "def,class,@",
-					"scope": "application",
-					"description": "Tokens (separated by a comma,without spaces) that start a new function. If 'function-level' is selected, prediction will stop when one of these token or a class-level token is encountered."
-				},
-				"tokens.stopClass": {
-					"type": "string",
-					"default": "class,@",
-					"scope": "application",
-					"description": "Tokens (separated by a comma,without spaces) that start a new class. If 'class-level' is selected, prediction will stop when one of these token is encountered."
-				},
-				"tokens.stopCustom": {
-					"type": "string",
-					"default": "",
-					"scope": "application",
-					"description": "Custom-level stop sequences (separated by a comma,without spaces)."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile && npm run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.2.2",
-		"@types/node": "14.x",
-		"@types/superagent": "^4.1.12",
-		"@types/vscode": "^1.56.0",
-		"@typescript-eslint/eslint-plugin": "^4.26.0",
-		"@typescript-eslint/parser": "^4.26.0",
-		"eslint": "^7.27.0",
-		"glob": "^7.1.7",
-		"mocha": "^8.4.0",
-		"typescript": "^4.3.2",
-		"vscode-test": "^1.5.2"
-	},
-	"dependencies": {
-		"superagent": "^6.1.0"
-	}
+  "name": "vscodexcopilot",
+  "displayName": "vscodexcopilot",
+  "publisher": "shirp",
+  "icon": "codex_icon.png",
+  "description": "A non-official OpenAI extension for vscode",
+  "version": "0.1.0",
+  "repository": "https://github.com/Shirp-l/VS-Codex-Copilot",
+  "engines": {
+    "vscode": "^1.67.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*",
+    "onCommand:vscodex.selectCodeToRefactor"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscodex.select-code-to-refactor-settings",
+        "title": "VScodex: Select code and refactor snippet",
+        "icon": "asssets/codex_icon.png"
+      }
+    ],
+    "configuration": {
+      "title": "VSCodex",
+      "properties": {
+        "VScodex.settings.openAiApiKey": {
+          "type": "string",
+          "default": "",
+          "scope": "application",
+          "description": "Your OpenAI secret, if empty, OPENAI_API_KEY environment variable will be used instead."
+        },
+        "VScodex.settings.editsModel": {
+          "type": "string",
+          "default": "code-davinci-edit-001",
+          "scope": "application",
+          "description": "Model used for code edits"
+        },
+        "VScodex.settings.completionsModel": {
+          "type": "string",
+          "default": "code-davinci-002",
+          "scope": "application",
+          "description": "Model used for code completions"
+        },
+        "VScodex.settings.editInstructions": {
+          "type": "string",
+          "default": "Refactor this code",
+          "scope": "application",
+          "description": "Instruction given to OpenAI editor"
+        },
+        "VScodex.settings.maxTokens": {
+          "type": "number",
+          "default": 250,
+          "scope": "application",
+          "description": "Maximum number of tokens predicted."
+        },
+        "VScodex.settings.n": {
+          "type": "number",
+          "default": 1,
+          "scope": "application",
+          "description": "How many edits to generate for the input and instruction from the edits model."
+        },
+        "VScodex.settings.temperature": {
+          "type": "number",
+          "default": 0,
+          "scope": "application",
+          "description": "0 -> deterministic model, 1 -> Random model"
+        },
+        "VScodex.settings.topP": {
+          "type": "number",
+          "default": 1,
+          "scope": "application",
+          "description": "0 -> deterministic model, 1 -> Random model\n0.1 means only the tokens comprising the top 10% probability mass are considered"
+        },
+        "VScodex.settings.presencePenalty": {
+          "type": "number",
+          "default": 0,
+          "scope": "application",
+          "description": "0-1, Higher value -> Less chance of repeating same topic"
+        },
+        "VScodex.settings.frequencyPenalty": {
+          "type": "number",
+          "default": 0,
+          "scope": "application",
+          "description": "0-1, Higher value -> Less chance of repeating same line"
+        },
+        "VScodex.settings.completionEngineStopSequence": {
+          "type": "string",
+          "default": "\n",
+          "scope": "application",
+          "description": "Up to 4 custom default stop sequence where codex will stop generating further text"
+        },
+        "VScodex.settings.completionEngineEnabled": {
+          "type": "boolean",
+          "default": "false",
+          "scope": "application",
+          "description": "Whether or not to enable codex inline code completion"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint . --ext .ts,.tsx",
+    "watch": "tsc -watch -p ./",
+    "download-api": "vscode-dts dev",
+    "postdownload-api": "vscode-dts main",
+    "postinstall": "npm run download-api"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.1.3",
+    "@types/mocha": "^8.2.2",
+    "@types/node": "^16.11.7",
+    "@types/superagent": "^4.1.15",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "@vscode/test-electron": "^2.1.5",
+    "eslint": "^7.27.0",
+    "glob": "^7.1.7",
+    "mocha": "^10.0.0",
+    "openai": "^3.0.0",
+    "typescript": "^4.7.2",
+    "vscode-dts": "^0.3.3"
+  }
 }

@@ -1,4 +1,12 @@
-node_modules
 out
-vscodex-*.vsix
-yarn-error.log
+node_modules
+.vscode-test/
+*.vsix
+
+/out-vsxi
+
+*.node
+
+/vscode.d.ts
+/vscode.proposed.d.ts
+vscode.d.ts

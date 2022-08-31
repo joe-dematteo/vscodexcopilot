@@ -1,53 +1,87 @@
-import internal = require("stream");
+import { getConfig } from './config';
+import { Configuration, OpenAIApi } from "openai";
 
-import {Config} from "./config";
+const config = getConfig();
 
-const superagent = require("superagent");
+const configuration = new Configuration({
+  apiKey: config.openAiApiKey ? process.env.OPENAIAI_API_KEY : '',
+});
+const openai = new OpenAIApi(configuration);
 
-// Endpoint for the OpenAI API codex completion
-const CODEX_URL = "https://api.openai.com/v1/engines/davinci-codex/completions";
+/**
+ * Send a request to the OpenAI server to get the tokens following prompt.
+ */
+// export const getEditResult = (
+//   req: string
+// ): Promise<string> => {
+//   return new Promise(async (resolve, reject) => {
+//     const createEditRequest = await openai.createEdit({
+//           /* eslint-disable @typescript-eslint/naming-convention */
+//           model: config.editsModel,
+//           input: req,
+//           instruction: config.editInstructions,
+//           n: config.n,
+//           temperature: config.temperature,
+//           top_p: config.topP,
+//         }), editResult = JSON.parse(createEditRequest.data.choices[0].text),
+//         checkEditResult = async (Error: any) => {
+//           if (Error) {
+//             let message: string;
+//             // If the API specified an error message, return it.
+//             if (Error.response.text) {
+//               message = JSON.parse(Error.response.text).error.message;
+//             } else {
+//               message = Error;
+//             }
+//             reject(new Error(message));
+//             return;
+//           }
+//
+//           if (editResult["choices"].length === 0) {
+//             reject(new Error("No code returned by the server."));
+//           } else {
+//             resolve(String(editResult["choices"][0]["text"]));
+//           }
+//         };
+//   });
+// };
 
 
 /**
  * Send a request to the OpenAI server to get the tokens following prompt.
  */
-export const getNextTokens = async (prompt: string,
-                                    config: Config,
-                                    apiKey: string
-                                    ): Promise<string> => new Promise((resolve, reject) => {
+export const getEditResult = (
+    req: string
+): Promise<string> => {
+    return new Promise(async (resolve, reject) => {
+        const createEditRequest = await openai.createEdit({
+                /* eslint-disable @typescript-eslint/naming-convention */
+                model: config.editsModel,
+                input: req,
+                instruction: config.editInstructions,
+                n: config.n,
+                temperature: config.temperature,
+                top_p: config.topP
+            }), editResult = JSON.parse(createEditRequest.data.choices[0].text),
+            getEditResult.then (Error: any) => {
+                if (Error) {
+                    let message: string;
+                    // If the API specified an error message, return it.
+                    if (Error.response.text) {
+                        message = JSON.parse(Error.response.text).error.message;
+                    } else {
+                        message = Error;
+                    }
+                    reject(new Error(message));
+                    return;
+                }
 
-    superagent
-	.post(CODEX_URL)
-	.send({ /* eslint-disable @typescript-eslint/naming-convention */
-		prompt: prompt,
-		temperature: config.temperature,
-		max_tokens: config.maxTokens,
-		top_p: config.topP,
-		presence_penalty: config.presencePenalty,
-		frequency_penalty: config.frequencyPenalty,
-		stop: config.stop.length === 0 ? null : config.stop // API does not accept empty array
-	})
-	.set("Authorization", "Bearer " + apiKey)
-	.end((error: any, response: any) => {
-		if (error) {
-			let message: string;
-            // If the API specified an error message, return it.
-			if (error.response.text) {
-				message = JSON.parse(error.response.text).error.message;
-			} else {
-				message = error;
-			}
-		reject(new Error(message));
-		return;
-		}
-
-		const resp = JSON.parse(response.text);
-		
-		if (resp["choices"].length === 0) {
-			reject(new Error("No code returned by the server."));
-		} else {
-			resolve(String(resp["choices"][0]["text"]));
-		}
-	});
-});
+                if (editResult["choices"].length === 0) {
+                    reject(new Error("No code returned by the server."));
+                } else {
+                    resolve(String(editResult["choices"][0]["text"]));
+                }
+            };
+    });
+};
 
