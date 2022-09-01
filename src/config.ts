@@ -1,3 +1,4 @@
+import { Configuration, OpenAIApi } from "openai";
 import * as vscode from 'vscode';
 
 export type Config = {
@@ -54,3 +55,20 @@ export const getConfig = (): Config => {
       false,
   };
 };
+
+/**
+ * Get API key, firstly from the extension settings and if not found, then from the environment variables.
+ * TODO: export a constant function that containts an openai api configuration with the api key.
+ */
+
+// export const getOpenAiApiKey = (): any => {
+//   const configuration = new Configuration({
+//     apiKey: vscode.workspace.getConfiguration('general').get("OPENAI_API_KEY") ?? process.env.OPENAI_API_KEY ?? '',
+//   const openai = new OpenAIApi(configuration);
+//     return getConfig().openAiApiKey;
+//   });
+//   };
+
+//  export const getApiKey = (): string => {
+//   return vscode.workspace.getConfiguration('general').get("OPENAI_API_KEY") ?? process.env.OPENAI_API_KEY ?? "";
+// };
