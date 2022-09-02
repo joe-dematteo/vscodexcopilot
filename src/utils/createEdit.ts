@@ -1,12 +1,6 @@
-import { Configuration, OpenAIApi } from "openai";
-import {getConfig} from "../config";
+import {getConfig, openai} from "../config";
 
 const config = getConfig();
-
-const configuration = new Configuration({
-    apiKey: config.openAiApiKey ? process.env.OPENAIAI_API_KEY : '',
-});
-const openai = new OpenAIApi(configuration);
 
 
 
@@ -16,8 +10,10 @@ export type CreateEditResult = {
 
 
 /**
- * Send a request to the OpenAI server to get the tokens following prompt.
+ * Send a request to the OpenAI API createEdit endpoint to get an edits response
+ * following the input given.
  */
+
 export const  getEditResult = (req: string): Promise<CreateEditResult> => {
     return new Promise(async (resolve, reject) => {
         await openai.createEdit({

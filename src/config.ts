@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
+import {Configuration, OpenAIApi} from 'openai';
 import * as vscode from 'vscode';
 
 export type Config = {
@@ -12,15 +12,15 @@ export type Config = {
   topP: number;
   presencePenalty: number;
   frequencyPenalty: number;
-  completionEngineDefaultstop: Array<string>;
+  completionEngineDefaultStop: Array<string>;
   completionEngineEnabled: boolean;
 };
 
+
 /**
- * Get the configuration from the settings.
- *
- * TODO: Return different value for `stop` depending on the level.
+ * Get the configuration from VScode settings.
  */
+
 export const getConfig = (): Config => {
   return {
     openAiApiKey:
@@ -47,7 +47,7 @@ export const getConfig = (): Config => {
       vscode.workspace.getConfiguration('general').get('presencePenalty') ?? 0,
     frequencyPenalty:
       vscode.workspace.getConfiguration('general').get('frequencyPenalty') ?? 0,
-    completionEngineDefaultstop:
+    completionEngineDefaultStop:
       vscode.workspace.getConfiguration('general').get('completionEngineStopSequence') ??
       [],
     completionEngineEnabled:
@@ -56,19 +56,13 @@ export const getConfig = (): Config => {
   };
 };
 
+
 /**
- * Get API key, firstly from the extension settings and if not found, then from the environment variables.
- * TODO: export a constant function that containts an openai api configuration with the api key.
+ * Bind a new configuration from openai API to a constant and use that to create
+ * a new OpenAIApi interface.
  */
 
-// export const getOpenAiApiKey = (): any => {
-//   const configuration = new Configuration({
-//     apiKey: vscode.workspace.getConfiguration('general').get("OPENAI_API_KEY") ?? process.env.OPENAI_API_KEY ?? '',
-//   const openai = new OpenAIApi(configuration);
-//     return getConfig().openAiApiKey;
-//   });
-//   };
-
-//  export const getApiKey = (): string => {
-//   return vscode.workspace.getConfiguration('general').get("OPENAI_API_KEY") ?? process.env.OPENAI_API_KEY ?? "";
-// };
+const configuration = new Configuration({
+  apiKey: getConfig().openAiApiKey,
+});
+export const openai = new OpenAIApi(configuration);

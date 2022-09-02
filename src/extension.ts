@@ -102,7 +102,7 @@ const registerExtensionCommands = (
           /* eslint-disable @typescript-eslint/naming-convention */
           model: config.editsModel,
           input: input,
-          instruction: config.editIntructions,
+          instruction: config.editInstructions,
           temperature: config.temperature,
           top_p: config.topP
         });
@@ -144,7 +144,7 @@ const registerExtensionCommands = (
               frequencyPenalty: config.frequencyPenalty,
               presencePenalty: config.presencePenalty,
               model: config.completionsModel,
-              stop: config.completionEngineDefaultstop,
+              stop: config.completionEngineDefaultStop,
               prompt: text,
             });
             codexChannel.appendLine(`provideCompletionGptResponse: ${JSON.stringify(gptResponse.data)}`);

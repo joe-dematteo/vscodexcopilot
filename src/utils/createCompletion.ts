@@ -1,12 +1,6 @@
-import { Configuration, OpenAIApi } from "openai";
-import {getConfig} from "../config";
+import {getConfig, openai} from "../config";
 
 const config = getConfig();
-
-const configuration = new Configuration({
-    apiKey: config.openAiApiKey ? process.env.OPENAIAI_API_KEY : '',
-});
-const openai = new OpenAIApi(configuration);
 
 
 
@@ -16,9 +10,11 @@ export type CreateCompletionResult = {
 
 
 /**
- * Send a request to the OpenAI server to get the tokens following prompt.
- */
-export const  getCompletionResult = (req: string): Promise<CreateCompletionResult> => {
+ * Send a request to the OpenAI API createCompletion endpoint to get completions
+ * response following the prompt given.
+*/
+
+const  getCompletionResult = (req: string): Promise<CreateCompletionResult> => {
     return new Promise(async (resolve, reject) => {
         await openai.createCompletion({
             /* eslint-disable @typescript-eslint/naming-convention */
@@ -28,7 +24,7 @@ export const  getCompletionResult = (req: string): Promise<CreateCompletionResul
             temperature: config.temperature,
             top_p: config.topP,
             n: config.n,
-            stop: config.completionEngineDefaultstop,
+            stop: config.completionEngineDefaultStop,
             presence_penalty: config.presencePenalty,
             frequency_penalty: config.frequencyPenalty
         })
