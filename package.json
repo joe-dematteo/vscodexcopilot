@@ -1,11 +1,14 @@
 {
-  "name": "vscodexcopilot",
-  "displayName": "vscodexcopilot",
+  "name": "codexco",
+  "displayName": "CodexCo",
   "publisher": "shirp",
   "icon": "codex_icon.png",
-  "description": "A non-official OpenAI extension for vscode",
+  "description": "A non-official OpenAI extension for VScode utilizing the Codex api to provide AI assisted code completions and refactoring.",
   "version": "0.1.0",
-  "repository": "https://github.com/Shirp-l/VS-Codex-Copilot",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Shirp-l/VS-Codex-Copilot"
+  },
   "engines": {
     "vscode": "^1.67.0"
   },
@@ -14,94 +17,159 @@
   ],
   "activationEvents": [
     "*",
-    "onCommand:vscodex.selectCodeToRefactor"
+    "onCommand:codexco.codeRefactor",
+    "onCommand:codexco.codeCompletion"
   ],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
-      {
-        "command": "vscodex.select-code-to-refactor-settings",
-        "title": "VScodex: Select code and refactor snippet",
-        "icon": "asssets/codex_icon.png"
-      }
-    ],
     "configuration": {
-      "title": "VSCodex",
+      "type": "object",
+      "title": "CodexCo",
       "properties": {
-        "VScodex.settings.openAiApiKey": {
+        "codexco.openAiApiKey": {
           "type": "string",
           "default": "",
+          "editPresentation": "singlelineText",
           "scope": "application",
           "description": "Your OpenAI secret, if empty, OPENAI_API_KEY environment variable will be used instead."
         },
-        "VScodex.settings.editsModel": {
+        "codexco.codeRefactor.editsModel": {
           "type": "string",
           "default": "code-davinci-edit-001",
           "scope": "application",
-          "description": "Model used for code edits"
+          "description": "ID of the model to use for code edits. You can visit OpenAI's documentation for a list of different models."
         },
-        "VScodex.settings.completionsModel": {
+        "codexco.codeCompletion.completionsModel": {
           "type": "string",
           "default": "code-davinci-002",
           "scope": "application",
-          "description": "Model used for code completions"
+          "description": "ID of the model to use for code completions. You can visit OpenAI's documentation for a list of different models."
         },
-        "VScodex.settings.editInstructions": {
+        "codexco.codeRefactor.editInstructions": {
           "type": "string",
           "default": "Refactor this code",
           "scope": "application",
           "description": "Instruction given to OpenAI editor"
         },
-        "VScodex.settings.maxTokens": {
+        "codexco.codeCompletion.maxTokens": {
           "type": "number",
           "default": 250,
           "scope": "application",
-          "description": "Maximum number of tokens predicted."
+          "description": "The maximum number of tokens to generate in the completion or edit. The token count of your prompt plus max_tokens cannot exceed the model's context length. Most models have a context length of 2048 tokens (except for the newest models, which support 4096)"
         },
-        "VScodex.settings.n": {
+        "codexco.settings.n": {
           "type": "number",
           "default": 1,
           "scope": "application",
           "description": "How many edits to generate for the input and instruction from the edits model."
         },
-        "VScodex.settings.temperature": {
+        "codexco.settings.temperature": {
           "type": "number",
           "default": 0,
           "scope": "application",
-          "description": "0 -> deterministic model, 1 -> Random model"
+          "description": "Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. We generally recommend altering this or top_p but not both."
         },
-        "VScodex.settings.topP": {
+        "codexco.settings.topP": {
           "type": "number",
           "default": 1,
           "scope": "application",
-          "description": "0 -> deterministic model, 1 -> Random model\n0.1 means only the tokens comprising the top 10% probability mass are considered"
+          "description": "An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. We generally recommend altering this or temperature but not both."
         },
-        "VScodex.settings.presencePenalty": {
+        "codexco.codeCompletion.presencePenalty": {
           "type": "number",
           "default": 0,
           "scope": "application",
-          "description": "0-1, Higher value -> Less chance of repeating same topic"
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics."
         },
-        "VScodex.settings.frequencyPenalty": {
+        "codexco.codeCompletion.frequencyPenalty": {
           "type": "number",
           "default": 0,
           "scope": "application",
-          "description": "0-1, Higher value -> Less chance of repeating same line"
+          "description": "Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim"
         },
-        "VScodex.settings.completionEngineStopSequence": {
+        "codexco.codeCompletion.StopSequence": {
           "type": "string",
-          "default": "\n",
+          "default": "",
           "scope": "application",
-          "description": "Up to 4 custom default stop sequence where codex will stop generating further text"
+          "description": "Up to 4 sequences seperated by commas, where the API will stop generating further tokens. The returned text will not contain the stop sequence."
         },
-        "VScodex.settings.completionEngineEnabled": {
+        "codexco.codeCompletion.activated": {
           "type": "boolean",
-          "default": "false",
+          "default": "true",
           "scope": "application",
           "description": "Whether or not to enable codex inline code completion"
         }
       }
-    }
+    },
+    "commands": [
+      {
+          "command": "codexco.codeCompletion",
+          "title": "CodexCo Invoke Service",
+          "category": "CodexCo"
+      }, 
+      {
+          "command": "codexco.codeRefactor",
+          "title": "CodexCo Invoke Service",
+          "category": "CodexCo"
+      },
+      {
+          "command": "codexco.codeRefactor.configure",
+          "title": "CodexCo Settings",
+          "category": "CodexCo",
+          "icon": "$(gear)"
+      }
+    ],
+    "keybindings": [
+      {
+          "command": "codexco.codeRefactor",
+          "key": "alt+x",
+          "mac": "alt+x",
+          "when": "editorTextFocus"
+      }, 
+      {
+          "command": "codexco.codeCompletion",
+          "key": "alt+c",
+          "mac": "alt+c",
+          "when": "editorTextFocus"
+      }, 
+      {
+          "command": "codexco.codeCompletion.nextCodeSuggestion",
+          "key": "right",
+          "mac": "right",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
+      },
+      {
+          "command": "codexco.codeCompletion.previousCodeSuggestion",
+          "key": "left",
+          "mac": "left",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
+      },
+      {
+          "command": "codexco.codeCompletion.rejectCodeSuggestion",
+          "key": "escape",
+          "mac": "escape",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
+      },
+      {
+          "command": "codexco.codeWhisperer.rejectCodeSuggestion",
+          "key": "backspace",
+          "mac": "backspace",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
+      },
+      {
+          "command": "codexco.codeCompletion.rejectCodeSuggestion",
+          "key": "down",
+          "mac": "down",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE",
+          "args": "down"
+      },
+      {
+          "command": "codexco.codeCompletion.acceptCodeSuggestion",
+          "key": "tab",
+          "mac": "tab",
+          "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
@@ -112,10 +180,14 @@
     "postdownload-api": "vscode-dts main",
     "postinstall": "npm run download-api"
   },
+  "dependencies": {
+    "openai": "^3.0.0",
+    "typescript": "^4.8.2"
+  },
   "devDependencies": {
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.2.2",
-    "@types/node": "^16.11.7",
+    "@types/node": "^18.7.15",
     "@types/superagent": "^4.1.15",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
@@ -123,8 +195,6 @@
     "eslint": "^7.27.0",
     "glob": "^7.1.7",
     "mocha": "^10.0.0",
-    "openai": "^3.0.0",
-    "typescript": "^4.7.2",
     "vscode-dts": "^0.3.3"
   }
 }

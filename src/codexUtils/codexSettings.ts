@@ -24,35 +24,35 @@ export type Config = {
 export const getConfig = (): Config => {
   return {
     openAiApiKey:
-      vscode.workspace.getConfiguration('general').get('openAiApiKey') ??
+      vscode.workspace.getConfiguration('codexco').get('openAiApiKey') ??
       process.env.OPENAI_API_KEY ??
       '',
     editsModel:
-      vscode.workspace.getConfiguration('general').get('editsModel') ??
+      vscode.workspace.getConfiguration('codexco').get('codeRefactor.editsModel') ??
       'code-davinci-edit-001',
     completionsModel:
-      vscode.workspace.getConfiguration('general').get('completionsModel') ??
+      vscode.workspace.getConfiguration('codexco').get('codeCompletion.completionsModel') ??
       'code-davinci-002',
     editInstructions:
-      vscode.workspace.getConfiguration('general').get('editInstructions') ??
+      vscode.workspace.getConfiguration('codexco').get('codeRefactor.editInstructions') ??
       'Refactor this code',
     maxTokens:
-        vscode.workspace.getConfiguration('general').get('maxTokens') ?? 64,
+        vscode.workspace.getConfiguration('codexco').get('codeCompletion.maxTokens') ?? 64,
     n:
-        vscode.workspace.getConfiguration('general').get('n') ?? 64,
+        vscode.workspace.getConfiguration('codexco').get('settings.n') ?? 64,
     temperature:
-      vscode.workspace.getConfiguration('general').get('temperature') ?? 0,
-    topP: vscode.workspace.getConfiguration('general').get('topP') ?? 1,
+      vscode.workspace.getConfiguration('codexco').get('settings.temperature') ?? 0,
+    topP: vscode.workspace.getConfiguration('codexco').get('settings.topP') ?? 1,
     presencePenalty:
-      vscode.workspace.getConfiguration('general').get('presencePenalty') ?? 0,
+      vscode.workspace.getConfiguration('codexco').get('codeCompletion.presencePenalty') ?? 0,
     frequencyPenalty:
-      vscode.workspace.getConfiguration('general').get('frequencyPenalty') ?? 0,
+      vscode.workspace.getConfiguration('codexco').get('codeCompletion.frequencyPenalty') ?? 0,
     completionEngineDefaultStop:
-      vscode.workspace.getConfiguration('general').get('completionEngineStopSequence') ??
+      vscode.workspace.getConfiguration('codexco').get('codeCompletion.StopSequence') ??
       [],
     completionEngineEnabled:
-      vscode.workspace.getConfiguration('general').get('completionEngineEnabled') ??
-      false,
+      vscode.workspace.getConfiguration('codexco').get('codeCompletion.activated') ??
+      true,
   };
 };
 
