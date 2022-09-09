@@ -16,9 +16,7 @@
     "Other"
   ],
   "activationEvents": [
-    "*",
-    "onCommand:codexco.codeRefactor",
-    "onCommand:codexco.codeCompletion"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -104,16 +102,16 @@
     "commands": [
       {
           "command": "codexco.codeCompletion",
-          "title": "CodexCo Invoke Service",
+          "title": "Code Completion",
           "category": "CodexCo"
       }, 
       {
           "command": "codexco.codeRefactor",
-          "title": "CodexCo Invoke Service",
+          "title": "Code Refactor",
           "category": "CodexCo"
       },
       {
-          "command": "codexco.codeRefactor.configure",
+          "command": "codexco.configure",
           "title": "CodexCo Settings",
           "category": "CodexCo",
           "icon": "$(gear)"
@@ -169,7 +167,21 @@
           "mac": "tab",
           "when": "editorTextFocus && CODEXCO_COMPLETION_ACTIVE"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "editorHasSelection",
+          "command": "codexco.codeRefactor",
+          "group": "1_modification"
+        }
+      ],
+      "view/item/context": [
+				{
+					"command": "codexco.configure"
+				}
+			]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

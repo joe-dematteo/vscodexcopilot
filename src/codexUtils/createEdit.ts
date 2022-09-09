@@ -2,7 +2,7 @@ import { getConfig, openai } from './codexSettings';
 
 
 export type CreateEditResult = {
-    createEditResultChoices: any;
+    createEditResultChoices: string | [];
 };
 
 
@@ -29,9 +29,9 @@ export const  getEditResult = (req: any): Promise<CreateEditResult> => {
                         resolve(response.data.choices[0]?.text ?? "Undefined case");
                     }
             });
-            createEditRequest.catch((error: string | undefined) => {
+            createEditRequest.catch((err: string | undefined) => {
                 // If the API specified an error message, return it.
-                reject(new Error(error));
+                reject(new Error(err?.toString()));
             });
     });
 };

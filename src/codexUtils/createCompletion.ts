@@ -2,7 +2,7 @@ import { getConfig, openai } from './codexSettings';
 
 
 type CreateCompletionResult = {
-    createCompletionResultChoices: any
+    resultChoices: string | []
 };
 
 
@@ -32,9 +32,9 @@ export const  getCompletionResult = (req: any): Promise<CreateCompletionResult> 
                     resolve(response.data.choices[0]?.text ?? "Undefined case");
                 }
         });
-        createCompletionRequest.catch((error: string | undefined) => {
+        createCompletionRequest.catch((err: string | undefined) => {
             // If the API specified an error message, return it.
-            reject(new Error(error));
+            reject(new Error(err?.toString()));
         });
     });
 };

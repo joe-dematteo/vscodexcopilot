@@ -4,15 +4,13 @@ import { getConfig } from './codexUtils/codexSettings';
 import { getEditResult } from './codexUtils/createEdit';
 import { getCompletionResult } from './codexUtils/createCompletion';
 
-
-const codexChannel = vscode.window.createOutputChannel("CodexCo");
-
+const codexChannel = vscode.window.createOutputChannel('CodexCo');
 
 const registerExtensionCommands = (): vscode.Disposable[] => {
   let disposables: vscode.Disposable[] = [];
   disposables = [
     ...disposables,
-    vscode.commands.registerCommand("codexco.codeRefactor", async () => {
+    vscode.commands.registerCommand('codexco.codeRefactor', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
         return;
@@ -20,61 +18,82 @@ const registerExtensionCommands = (): vscode.Disposable[] => {
       const doc = editor.document;
       const text = doc.getText(editor.selection);
       const newText = await getEditResult(text);
-      editor.edit((editBuilder) => {
-        editBuilder.replace(editor.selection, newText);
-      });
+      if (text.length === 0) {
+        vscode.window.showErrorMessage(
+          'You must select code to refactor first! '
+        );
+      } else {
+        editor.edit((editBuilder) => {
+          editBuilder.replace(editor.selection, newText);
+        });
+      }
     }),
   ];
   if (getConfig().completionEngineEnabled) {
-    codexChannel.appendLine(`Completion model enabled: ${getConfig().completionsModel}`);
+    codexChannel.appendLine(
+      `Completion model enabled: ${getConfig().completionsModel}`
+    );
     disposables = [
       ...disposables,
-      vscode.languages.registerCompletionItemProvider(
-        { scheme: "file", language: "*" },
-        {
-          async provideCompletionItems(
-            document: vscode.TextDocument,
-            position: vscode.Position,
-            token: vscode.CancellationToken,
-            context: vscode.CompletionContext
-          ) {
-            // debug logging
-            codexChannel.appendLine(
-              `provideCompletionItems: ${document.uri.fsPath} ${position.line} ${position.character}`
+      vscode.commands.registerCommand('codexco.codeCompletion', async () => {
+        const provider: vscode.InlineCompletionItemProvider = {
+          provideInlineCompletionItems: async (
+            document,
+            position,
+						context,
+						token
+          ) => {
+            const textBeforeCursor = document.getText(
+              new vscode.Range(position.with(undefined, 0), position)
             );
-            codexChannel.appendLine(`provideCompletionItemsContext: ${JSON.stringify(context)}`);
-            token.onCancellationRequested(() => {
-              codexChannel.appendLine(`provideCompletionItems: Cancelled`);
-            });
-            const text = document.getText(new vscode.Range(new vscode.Position(position.line-3, 0), position));
+            let items: any[] = [];
 
-            const completionsResponse = await getCompletionResult(text);
-            codexChannel.appendLine(
-              `provideCompletionItems: ${JSON.stringify(completionsResponse)}`
-            );
-            return completionsResponse;
+            if (position.line <= 0) {
+              let completionsResponse;
+              try {
+                completionsResponse = await getCompletionResult(
+                  textBeforeCursor
+                );
+                if (completionsResponse) {
+                  items = completionsResponse.results.map((item) => {
+                    const output = `\n${completionsResponse} \n${item.code}`;
+                    return {
+                      text: output,
+                      insertText: output,
+                      range: new vscode.Range(
+                        position.translate(0, output.length),
+                        position
+                      ),
+                    };
+                  });
+                }
+              } catch (err: any) {
+                vscode.window.showErrorMessage(err.toString());
+              }
+              return { items };
+            }
+            return;
           },
-        },
-        ".",
-        "\n",
-        ":",
-        "\t",
-        ","
-      ),
+        };
+        vscode.languages.registerInlineCompletionItemProvider(
+          { pattern: '**' },
+          provider
+        );
+      }),
     ];
   }
   return disposables;
 };
 export function activate(context: vscode.ExtensionContext) {
-  let config = vscode.workspace.getConfiguration("codexco");
+  let config = vscode.workspace.getConfiguration('codexco');
   // Add configuration
   let disposables: vscode.Disposable[] = [];
   disposables = registerExtensionCommands();
   context.subscriptions.push(...disposables);
   // Listen for configuration changes and reload extension commands
   const configWatcher = vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("codexco")) {
-      config = vscode.workspace.getConfiguration("codexco");
+    if (e.affectsConfiguration('codexco')) {
+      config = vscode.workspace.getConfiguration('codexco');
       disposables.forEach((disposable) => disposable.dispose());
       disposables = registerExtensionCommands();
       context.subscriptions.push(...disposables);
